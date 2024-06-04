@@ -14,7 +14,6 @@ app.use(cors());
 const MONGODB_URI = 'mongodb+srv://iammayank1628:vrdental%401234@vrdentaldesign.p2gimxu.mongodb.net/';
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
 })
   .then(() => console.log('MongoDB connected'))
   .catch((err) => console.log('MongoDB connection error: ', err));
