@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { NavItem, ContactInfo, SocialLink } = require('../models/NavItem');
 
+
 // Endpoint to fetch navbar items
 router.get('/navbar', async (req, res) => {
   try {
