@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const navbarRoutes = require('./routes/navbar');
-const adminRoutes = require('./routes/admin');
 const authRoutes = require('./routes/auth'); 
 const auth = require('./middleware/auth'); 
 
@@ -23,7 +22,6 @@ mongoose.connect(MONGODB_URI, {
   .catch((err) => console.log('MongoDB connection error: ', err));
 
 app.use('/api', navbarRoutes);
-app.use('/api/admin', auth, adminRoutes); 
 app.use('/api/auth', authRoutes);
 
 app.listen(PORT, () => {
