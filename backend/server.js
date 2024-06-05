@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const navbarRoutes = require('./routes/navbar');
+const bannerRoutes = require('./routes/banner')
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -19,6 +20,7 @@ mongoose.connect(MONGODB_URI, {
   .catch((err) => console.log('MongoDB connection error: ', err));
 
 app.use('/api', navbarRoutes);
+app.use('/api', bannerRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
