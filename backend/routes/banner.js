@@ -42,12 +42,21 @@ router.post('/upload', upload.single('image'), async (req, res) => {
     // Remove the temporary file
     fs.unlinkSync(req.file.path);
 
-    // Create new slide with the uploaded image URL
+    // Extract the new slide data from the request body
+    const { title, heading, description, position } = req.body;
+
+    // Step 1: Update the positions of existing slides
+    await SlideContent.updateMany(
+      { position: { $gte: position } },
+      { $inc: { position: 1 } }
+    );
+
+    // Step 2: Create new slide with the uploaded image URL
     const newSlide = new SlideContent({
-      title: req.body.title,
-      heading: req.body.heading,
-      description: req.body.description,
-      position: req.body.position,
+      title,
+      heading,
+      description,
+      position,
       backgroundImageUrl: result.secure_url,
     });
 
@@ -55,15 +64,15 @@ router.post('/upload', upload.single('image'), async (req, res) => {
 
     res.status(201).json(newSlide);
   } catch (error) {
+    console.error('Failed to upload image and create slide:', error);
     res.status(500).json({ message: 'Failed to upload image and create slide', error: error.message });
   }
 });
 
 //endpoint to edit
-router.put('/banner/:id', async (req, res) => {
+router.put('/banner/:id', upload.single('image'), async (req, res) => {
   try {
     const itemId = req.params.id;
-
     const { position, ...updateData } = req.body;
     const currentItem = await SlideContent.findById(itemId);
 
@@ -72,7 +81,6 @@ router.put('/banner/:id', async (req, res) => {
     }
 
     if (position !== undefined && position !== currentItem.position) {
-      // Adjust positions of other items
       if (position > currentItem.position) {
         await SlideContent.updateMany(
           { position: { $gt: currentItem.position, $lte: position } },
@@ -87,12 +95,20 @@ router.put('/banner/:id', async (req, res) => {
       currentItem.position = position;
     }
 
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'banner-images',
+      });
+      fs.unlinkSync(req.file.path);
+      updateData.backgroundImageUrl = result.secure_url;
+    }
+
     Object.assign(currentItem, updateData);
     const updatedItem = await currentItem.save();
 
     res.json(updatedItem);
   } catch (error) {
-    console.error('Error updating slide:', error); 
+    console.error('Error updating slide:', error);
     res.status(400).json({ message: error.message });
   }
 });
