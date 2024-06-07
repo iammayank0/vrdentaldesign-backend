@@ -40,7 +40,7 @@ router.post('/upload', upload.single('image'), async (req, res) => {
     });
 
     // Remove the temporary file
-    fs.unlinkSync(req.file.path);
+    await fs.unlinkSync(req.file.path);
 
     // Extract the new slide data from the request body
     const { title, heading, description, position } = req.body;
@@ -99,7 +99,7 @@ router.put('/banner/:id', upload.single('image'), async (req, res) => {
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: 'banner-images',
       });
-      fs.unlinkSync(req.file.path);
+      await fs.unlinkSync(req.file.path);
       updateData.backgroundImageUrl = result.secure_url;
     }
 
