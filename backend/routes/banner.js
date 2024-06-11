@@ -1,4 +1,4 @@
-// routes/banner.js
+
 const express = require('express');
 const multer = require('multer');
 const { SlideContent } = require('../models/BannerItem');
@@ -27,14 +27,14 @@ router.get('/banner', async (req, res) => {
   }
 });
 
-// Endpoint to upload an image and create a new slide
+// Endpoint to  create a new slide
 router.post('/upload', upload.single('image'), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'No file uploaded or file type not supported' });
   }
 
   try {
-    // Upload image to Cloudinary with the specific folder
+    
     const result = await cloudinary.uploader.upload(req.file.path, {
       folder: 'banner-images',
     });
@@ -42,16 +42,16 @@ router.post('/upload', upload.single('image'), async (req, res) => {
     // Remove the temporary file
     await fs.unlinkSync(req.file.path);
 
-    // Extract the new slide data from the request body
+    
     const { title, heading, description, position } = req.body;
 
-    // Step 1: Update the positions of existing slides
+    
     await SlideContent.updateMany(
       { position: { $gte: position } },
       { $inc: { position: 1 } }
     );
 
-    // Step 2: Create new slide with the uploaded image URL
+    
     const newSlide = new SlideContent({
       title,
       heading,

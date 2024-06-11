@@ -128,7 +128,7 @@ router.put('/contact-info/:id', async (req, res) => {
 });
 
 
-// CRUD for Social Links
+// fetch for Social Links
 router.get('/social-links', async (req, res) => {
   try {
     const socialLinks = await SocialLink.find();
