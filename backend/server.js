@@ -10,9 +10,10 @@ const aboutRoutes = require('./routes/about');
 const factRoutes = require('./routes/fact');
 const serviceRoutes = require('./routes/service');
 const whychooseusRoutes = require('./routes/whychooseus');
+const doctorRoutes = require('./routes/doctor');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -31,6 +32,7 @@ app.use('/api', aboutRoutes);
 app.use('/api', factRoutes);
 app.use('/api', serviceRoutes);
 app.use('/api', whychooseusRoutes);
+app.use('/api', doctorRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
