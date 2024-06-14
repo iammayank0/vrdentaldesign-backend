@@ -11,6 +11,7 @@ const factRoutes = require('./routes/fact');
 const serviceRoutes = require('./routes/service');
 const whychooseusRoutes = require('./routes/whychooseus');
 const doctorRoutes = require('./routes/doctor');
+const ctaRoutes = require('./routes/cta');
 
 const app = express();
 const PORT = 5000;
@@ -33,6 +34,7 @@ app.use('/api', factRoutes);
 app.use('/api', serviceRoutes);
 app.use('/api', whychooseusRoutes);
 app.use('/api', doctorRoutes);
+app.use('/api', ctaRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
