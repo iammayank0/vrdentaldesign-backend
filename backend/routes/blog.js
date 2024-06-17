@@ -2,8 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const fs = require('fs');
 const cloudinary = require('../config/cloudinaryConfig');
-const { Blog } = require('../models/Blog');
-const { BlogText } = require('../models/BlogText');
+const { Blog, BlogText } = require('../models/Blog');
 
 const router = express.Router();
 
@@ -54,7 +53,7 @@ router.post('/blog/upload', upload.fields([{ name: 'image', maxCount: 1 }]), asy
   
       // Create new blog post
       const newBlog = new Blog({
-        title: req.body.title,
+        BlogTitle: req.body.BlogTitle,
         date: req.body.date,
         image: imageResult.secure_url,
         link: req.body.link
@@ -91,13 +90,13 @@ router.post('/blog-text', async (req, res) => {
   }
 });
 
-// Edit Blog Post
+// Edit Blog 
 router.put('/blog/:id', upload.fields([{ name: 'image', maxCount: 1 }]), async (req, res) => {
     const { id } = req.params;
-    const { title, date, link } = req.body;
+    const { BlogTitle, date, link } = req.body;
   
     const updates = {};
-    if (title) updates.title = title;
+    if (BlogTitle) updates.BlogTitle = BlogTitle;
     if (date) updates.date = date;
     if (link) updates.link = link;
   
