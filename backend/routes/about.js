@@ -61,7 +61,6 @@ router.post('/about/upload', upload.fields([
         const { subTitle, title, description, services, companyName, founders } = req.body;
 
         // Create a new AboutContent document
-        // Create a new AboutContent document
         const newAbout = new AboutContent({
             img1: img1Url,
             img2: img2Url,

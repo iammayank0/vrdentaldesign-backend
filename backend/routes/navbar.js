@@ -1,7 +1,10 @@
 const express = require('express');
-const router = express.Router();
+const multer = require('multer');
 const { NavItem, ContactInfo, SocialLink } = require('../models/NavItem');
+const cloudinary = require('../config/cloudinaryConfig');
+const fs = require('fs');
 
+const router = express.Router();
 
 // Endpoint to fetch navbar items
 router.get('/navbar', async (req, res) => {
