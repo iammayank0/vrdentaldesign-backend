@@ -1,10 +1,91 @@
 const express = require('express');
 const multer = require('multer');
-const { NavItem, ContactInfo, SocialLink } = require('../models/NavItem');
+const { NavItem, ContactInfo, SocialLink, Logo } = require('../models/NavItem');
 const cloudinary = require('../config/cloudinaryConfig');
 const fs = require('fs');
 
 const router = express.Router();
+
+const upload = multer({
+  dest: 'uploads/',
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
+    }
+  },
+});
+
+// Fetch logo
+router.get('/logo', async (req, res) => {
+  try {
+    const logo = await Logo.findOne();
+    res.json(logo);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Endpoint to create a new logo
+router.post('/logo', upload.single('image'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file uploaded or file type not supported' });
+  }
+
+  try {
+    // Upload the image to Cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'logo-images',
+    });
+
+    // Remove the temporary file
+    await fs.unlinkSync(req.file.path);
+
+    // Save the logo URL in the database
+    const newLogo = new Logo({ logoUrl: result.secure_url });
+    await newLogo.save();
+
+    res.status(201).json(newLogo);
+  } catch (error) {
+    console.error('Failed to upload image and create logo:', error);
+    res.status(500).json({ message: 'Failed to upload image and create logo', error: error.message });
+  }
+});
+
+// Endpoint to edit an existing logo
+router.put('/logo/:id', upload.single('image'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file uploaded or file type not supported' });
+  }
+
+  try {
+    const logoId = req.params.id;
+    const logo = await Logo.findById(logoId);
+
+    if (!logo) {
+      return res.status(404).json({ message: 'Logo not found' });
+    }
+
+    // Upload the new image to Cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'logo-images',
+    });
+
+    // Remove the temporary file
+    await fs.unlinkSync(req.file.path);
+
+    // Update the logo URL in the database
+    logo.logoUrl = result.secure_url;
+    await logo.save();
+
+    res.json(logo);
+  } catch (error) {
+    console.error('Failed to upload image and update logo:', error);
+    res.status(500).json({ message: 'Failed to upload image and update logo', error: error.message });
+  }
+});
+
 
 // Endpoint to fetch navbar items
 router.get('/navbar', async (req, res) => {
