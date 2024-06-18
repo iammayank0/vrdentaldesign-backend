@@ -87,15 +87,19 @@ router.put('/footer/edit/:id', upload.single('logo'), async (req, res) => {
       return res.status(404).json({ message: 'Footer entry not found' });
     }
 
-    // Update fields if provided, otherwise keep the existing values
+    // Handle logo image update if provided
     if (req.file) {
-      // Handle logo image update
+      // Upload logo to Cloudinary
       const logoResult = await cloudinary.uploader.upload(req.file.path, {
         folder: 'logo-images',
       });
       existingFooter.description.logo = logoResult.secure_url;
-      fs.unlinkSync(req.file.path); // Remove the file from local uploads folder
+
+      // Remove the file from local uploads folder after upload
+      fs.unlinkSync(req.file.path);
     }
+
+    // Update other fields if provided
     if (descriptionText) {
       existingFooter.description.text = descriptionText;
     }
@@ -112,9 +116,8 @@ router.put('/footer/edit/:id', upload.single('logo'), async (req, res) => {
       existingFooter.socialLinks.instagram = instagram;
     }
     if (quickLinks) {
-      let parsedQuickLinks;
       try {
-        parsedQuickLinks = JSON.parse(quickLinks);
+        const parsedQuickLinks = JSON.parse(quickLinks);
         if (!Array.isArray(parsedQuickLinks)) {
           return res.status(400).json({ message: 'quickLinks must be an array' });
         }
