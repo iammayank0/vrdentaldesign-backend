@@ -17,12 +17,11 @@ const FooterSchema = new mongoose.Schema({
       url: { type: String, required: true },
     },
   ],
-  contactInfo: [
-    {
-      location: { type: String, required: true },
-      phone: { type: String, required: true },
-    },
-  ],
+  contactInfo: {
+    location1: { type: String, required: true },
+    location2: { type: String, required: true },
+    phone: { type: String, required: true },
+  },
   copyright: { type: String, required: true },
 });
 
